@@ -1,0 +1,50 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: db_livros
+      MYSQL_USER: usuario
+      MYSQL_PASSWORD: 123
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+    networks:
+      - livros
+
+  livros-service:
+    image: livros-service:latest
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - "0:8080"
+    deploy:
+      replicas: 3
+    depends_on:
+      - mysql
+    networks:
+      - livros
+
+  eureka-server:
+    image: flaviorv/eureka-server:v1
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    networks:
+      - livros
+
+  livros-gateway:
+    image: livros-gateway:latest
+    depends_on:
+      - livros-service
+    ports:
+      - "9999:9999"
+    networks:
+      - livros
+
+networks:
+  livros:
+    driver: bridge

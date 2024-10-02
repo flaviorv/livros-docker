@@ -1,0 +1,44 @@
+spring:
+  cloud:
+    gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowed-headers: "*"
+            allowedOrigins: "*"
+            allow-credentials: false
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+              - PATCH
+              - HEAD
+        add-to-simple-url-handler-mapping: true
+      routes:
+        - id: livros
+          uri: lb://livros-service
+          predicates:
+            - Path=/**
+  application:
+    name: livros-gateway
+server:
+  port: 9999
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${random.value}
+  client:
+    service-url:
+      defaultZone: http://EUREKA-SERVER:8761/eureka/
+    fetch-registry: true
+    register-with-eureka: true
+    enabled: true
+management:
+  endpoint:
+    gateway:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
