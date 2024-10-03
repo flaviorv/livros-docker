@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: unbunto-latest
+    runs-on: ubunto-latest
 
     steps:
       - name: Checkout code
